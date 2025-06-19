@@ -46,7 +46,7 @@
                       ></v-progress-circular>
                       <span class="ml-2 text-grey">Thinking...</span>
                     </template>
-                    <p v-else>{{ message.content }}</p>
+                    <div v-else class="message-content" v-html="formatMessage(message.content)"></div>
                   </div>
                 </div>
               </div>
@@ -340,8 +340,66 @@ const saveSettings = async () => {
   }
 }
 
+// Format message content for better display
+const formatMessage = (content: string) => {
+  return content
+    // Replace double asterisks with bold
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Replace single asterisks with italic
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Replace numbered lists
+    .replace(/^(\d+)\.\s/gm, '<br><strong>$1.</strong> ')
+    // Replace bullet points
+    .replace(/^[-*]\s/gm, '<br>• ')
+    // Replace double line breaks with paragraph breaks
+    .replace(/\n\n/g, '</p><p>')
+    // Replace single line breaks with br tags
+    .replace(/\n/g, '<br>')
+    // Wrap in paragraph tags
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>')
+    // Clean up empty paragraphs
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p><br>/g, '<p>')
+}
+
 // Load workspace on mount
 onMounted(() => {
   fetchWorkspace()
 })
 </script>
+
+<style scoped>
+.message-content {
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.message-content :deep(p) {
+  margin-bottom: 12px;
+}
+
+.message-content :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.message-content :deep(strong) {
+  font-weight: 600;
+  color: rgb(var(--v-theme-primary));
+}
+
+.message-content :deep(em) {
+  font-style: italic;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.message-content :deep(br) {
+  line-height: 1.2;
+}
+
+/* Improve spacing for lists */
+.message-content :deep(br + strong) {
+  margin-top: 8px;
+  display: inline-block;
+}
+</style>
