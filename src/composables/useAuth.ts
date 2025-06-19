@@ -10,13 +10,19 @@ export function useAuth() {
   // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
+      console.log('Attempting sign in with:', email)
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       })
-      if (error) throw error
+      if (error) {
+        console.error('Sign in error:', error)
+        throw error
+      }
+      console.log('Sign in successful:', data)
       return { data, error: null }
     } catch (error) {
+      console.error('Sign in exception:', error)
       return { data: null, error }
     }
   }
@@ -24,13 +30,19 @@ export function useAuth() {
   // Sign up with email and password
   const signUp = async (email: string, password: string) => {
     try {
+      console.log('Attempting sign up with:', email)
       const { data, error } = await supabase.auth.signUp({
         email,
         password
       })
-      if (error) throw error
+      if (error) {
+        console.error('Sign up error:', error)
+        throw error
+      }
+      console.log('Sign up successful:', data)
       return { data, error: null }
     } catch (error) {
+      console.error('Sign up exception:', error)
       return { data: null, error }
     }
   }
